@@ -102,6 +102,18 @@ const (
 	// StateRestoring is used to set the endpoint is being restored.
 	StateRestoring = State(models.EndpointStateRestoring)
 
+	// StateLockingDown is used to set the endpoint is attempting
+	// to lockdown.
+	StateLockingDown = State(models.EndpointStateLockingDown)
+
+	// StateSoftLockdown is used to set the endpoint is in a
+	// lockdown mode in which only deny policies are being added.
+	StateSoftLockdown = State(models.EndpointStateAllowLockdown)
+
+	// StateFullLockdown is used to set the endpoint is in a
+	// lockdown mode in which no ingress or egress traffic is allowed.
+	StateFullLockdown = State(models.EndpointStateFullLockdown)
+
 	// StateInvalid is used when an endpoint failed during creation due to
 	// invalid data.
 	StateInvalid = State(models.EndpointStateInvalid)
@@ -1366,7 +1378,7 @@ func (e *Endpoint) setState(toState State, reason string) bool {
 		}
 	case StateReady:
 		switch toState {
-		case StateWaitingForIdentity, StateDisconnecting, StateWaitingToRegenerate, StateRestoring:
+		case StateWaitingForIdentity, StateDisconnecting, StateWaitingToRegenerate, StateRestoring, StateLockingDown:
 			goto OKState
 		}
 	case StateDisconnecting:
@@ -1410,6 +1422,8 @@ func (e *Endpoint) setState(toState State, reason string) bool {
 		case StateDisconnecting, StateRestoring:
 			goto OKState
 		}
+	case StateLockingDown, StateFullLockdown, StateSoftLockdown:
+		goto OKState
 	}
 	if toState != fromState {
 		_, fileName, fileLine, _ := runtime.Caller(1)
