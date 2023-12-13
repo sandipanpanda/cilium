@@ -184,6 +184,7 @@ jobs:
           export CL2_ENABLE_NETWORKPOLICIES=true
           export CL2_ALLOWED_SLOW_API_CALLS=1
           export CL2_SCHEDULER_THROUGHPUT_THRESHOLD=0
+          export GCE_SSH_KEY=${{ steps.deploy-cluster.outputs.ssh_key }}
 
           go run ./cmd/clusterloader.go \
             -v=4 \
