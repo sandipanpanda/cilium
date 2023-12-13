@@ -187,7 +187,7 @@ jobs:
           export GCE_SSH_KEY=${{ steps.deploy-cluster.outputs.ssh_key }}
 
           go run ./cmd/clusterloader.go \
-            -v=4 \
+            -v=2 \
             --testconfig=./testing/load/config.yaml \
             --provider=gce \
             --enable-prometheus-server \
