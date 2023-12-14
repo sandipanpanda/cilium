@@ -1,0 +1,24 @@
+---
+    name: Call Backport Label Updater
+    on:
+      pull_request_target:
+        types:
+          - closed
+        branches:
+          - v1.15
+          - v1.14
+          - v1.13
+          - v1.12
+    jobs:
+      matrix:
+        branch: ["1.12", "1.13", "1.14", "1.15"]
+      call-backport-label-updater-next:
+        if: |
+            github.event.pull_request.merged == true &&
+            contains(github.event.pull_request.body, 'upstream-prs') &&
+            contains(github.event.pull_request.labels.*.name, 'backport/${{ matrix.branch }}')
+        uses: cilium/cilium/.github/workflows/update-label-backport-pr.yaml@main
+        with:
+          pr-body: ${{ github.event.pull_request.body }}
+          branch: ${{ matrix.branch }}
+        secrets: inherit
